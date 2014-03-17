@@ -6,13 +6,23 @@ import sk.uniza.fri.II008.EventSimulation;
 
 public class PauseEvent extends Event
 {
-	private final long interval, paused;
+	private long interval, paused;
 
 	public PauseEvent(long timestamp, EventSimulation simulation, long interval, long paused)
 	{
 		super(timestamp, simulation);
 
 		this.interval = interval;
+		this.paused = paused;
+	}
+
+	public void setInterval(long interval)
+	{
+		this.interval = interval;
+	}
+
+	public void setPaused(long paused)
+	{
 		this.paused = paused;
 	}
 
@@ -23,8 +33,11 @@ public class PauseEvent extends Event
 		{
 			Thread.sleep(paused);
 
-			Event event = new PauseEvent(timestamp + interval, simulation, interval, paused);
-			simulation.addEvent(event);
+			if (simulation.hasPauseEvent())
+			{
+				timestamp = timestamp + interval;
+				simulation.addEvent(this);
+			}
 		}
 		catch (InterruptedException ex)
 		{

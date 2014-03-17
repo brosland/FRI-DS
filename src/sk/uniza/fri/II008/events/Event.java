@@ -4,7 +4,7 @@ import sk.uniza.fri.II008.EventSimulation;
 
 public abstract class Event implements Runnable
 {
-	protected final long timestamp;
+	protected long timestamp;
 	protected final EventSimulation simulation;
 
 	public Event(long timestamp, EventSimulation simulation)

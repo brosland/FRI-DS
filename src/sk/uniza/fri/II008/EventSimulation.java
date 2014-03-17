@@ -39,10 +39,23 @@ public abstract class EventSimulation extends Simulation
 		return generators.get(generator);
 	}
 
+	public boolean hasPauseEvent()
+	{
+		return pauseEvent != null;
+	}
+
 	public void setPauseEvent(long interval, long paused)
 	{
-		this.pauseEvent = new PauseEvent(timestamp, this, interval, paused);
-		addEvent(pauseEvent);
+		if (pauseEvent == null)
+		{
+			pauseEvent = new PauseEvent(timestamp, this, interval, paused);
+			addEvent(pauseEvent);
+		}
+		else
+		{
+			pauseEvent.setInterval(interval);
+			pauseEvent.setPaused(paused);
+		}
 	}
 
 	public void removePauseEvent()
@@ -100,6 +113,9 @@ public abstract class EventSimulation extends Simulation
 			event.run();
 		}
 
-		return new Object[] {replication};
+		return new Object[]
+		{
+			replication
+		};
 	}
 }
