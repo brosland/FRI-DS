@@ -2,7 +2,7 @@ package sk.uniza.fri.II008;
 
 import sk.uniza.fri.II008.events.Event;
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.PriorityQueue;
 import sk.uniza.fri.II008.events.PauseEvent;
 import sk.uniza.fri.II008.generators.IGenerator;
 import sk.uniza.fri.II008.generators.IGenerator.IGeneratorType;
@@ -10,7 +10,7 @@ import sk.uniza.fri.II008.generators.IGenerator.IGeneratorType;
 public abstract class EventSimulation extends Simulation
 {
 	protected final HashMap<IGeneratorType, IGenerator> generators;
-	private final LinkedList<Event> events;
+	private final PriorityQueue<Event> events;
 	private PauseEvent pauseEvent;
 	private final long maxTimestamp;
 	private volatile long timestamp;
@@ -21,7 +21,7 @@ public abstract class EventSimulation extends Simulation
 
 		this.maxTimestamp = maxSimulationTime;
 		generators = new HashMap<>();
-		events = new LinkedList<>();
+		events = new PriorityQueue<>();
 	}
 
 	public long getTimestamp()
@@ -67,16 +67,7 @@ public abstract class EventSimulation extends Simulation
 
 	public void addEvent(Event event)
 	{
-		for (int i = 0; i < events.size(); i++)
-		{
-			if (event.getTimestamp() < events.get(i).getTimestamp())
-			{
-				events.add(i, event);
-				return;
-			}
-		}
-
-		events.addLast(event);
+		events.add(event);
 	}
 
 	@Override
@@ -109,7 +100,7 @@ public abstract class EventSimulation extends Simulation
 				continue;
 			}
 
-			Event event = events.removeFirst();
+			Event event = events.remove();
 			timestamp = event.getTimestamp();
 
 			if (timestamp > maxTimestamp)
