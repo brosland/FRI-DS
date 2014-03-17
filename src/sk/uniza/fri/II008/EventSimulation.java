@@ -11,9 +11,9 @@ public abstract class EventSimulation extends Simulation
 {
 	protected final HashMap<IGeneratorType, IGenerator> generators;
 	private final LinkedList<Event> events;
+	private PauseEvent pauseEvent;
 	private final long maxTimestamp;
 	private volatile long timestamp;
-	private volatile PauseEvent pauseEvent;
 
 	public EventSimulation(long maxReplication, long batchSize, long maxSimulationTime)
 	{
@@ -48,7 +48,9 @@ public abstract class EventSimulation extends Simulation
 	{
 		if (pauseEvent == null)
 		{
-			pauseEvent = new PauseEvent(timestamp, this, interval, paused);
+			long nextTimestamp = PauseEvent.getNextTimestamp(timestamp, interval);
+			pauseEvent = new PauseEvent(nextTimestamp, this, interval, paused);
+
 			addEvent(pauseEvent);
 		}
 		else
@@ -82,6 +84,11 @@ public abstract class EventSimulation extends Simulation
 	{
 		timestamp = 0;
 		events.clear();
+
+		if (hasPauseEvent())
+		{
+			addEvent(pauseEvent);
+		}
 	}
 
 	@Override

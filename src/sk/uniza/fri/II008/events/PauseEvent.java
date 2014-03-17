@@ -33,15 +33,20 @@ public class PauseEvent extends Event
 		{
 			Thread.sleep(paused);
 
-			if (simulation.hasPauseEvent())
+			if (getSimulation().hasPauseEvent())
 			{
-				timestamp = timestamp + interval;
-				simulation.addEvent(this);
+				setTimestamp(getNextTimestamp(getTimestamp(), interval));
+				getSimulation().addEvent(this);
 			}
 		}
 		catch (InterruptedException ex)
 		{
 			Logger.getLogger(PauseEvent.class.getName()).log(Level.SEVERE, null, ex);
 		}
+	}
+
+	public static long getNextTimestamp(long timestamp, long interval)
+	{
+		return (timestamp / interval + 1) * interval;
 	}
 }
