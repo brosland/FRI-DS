@@ -4,21 +4,21 @@ import sk.uniza.fri.II008.EventSimulation;
 
 public abstract class Event implements Runnable, Comparable<Event>
 {
-	private long timestamp;
+	private double timestamp;
 	private final EventSimulation simulation;
 
-	public Event(long timestamp, EventSimulation simulation)
+	public Event(double timestamp, EventSimulation simulation)
 	{
 		this.timestamp = timestamp;
 		this.simulation = simulation;
 	}
 
-	public long getTimestamp()
+	public double getTimestamp()
 	{
 		return timestamp;
 	}
 
-	public void setTimestamp(long timestamp)
+	public void setTimestamp(double timestamp)
 	{
 		this.timestamp = timestamp;
 	}
@@ -31,8 +31,6 @@ public abstract class Event implements Runnable, Comparable<Event>
 	@Override
 	public int compareTo(Event event)
 	{
-		long result = getTimestamp() - event.getTimestamp();
-
-		return result == 0 ? 0 : (result < 0 ? -1 : 1);
+		return timestamp < event.getTimestamp() ? -1 : 1;
 	}
 }

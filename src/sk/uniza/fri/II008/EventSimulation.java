@@ -12,10 +12,10 @@ public abstract class EventSimulation extends Simulation
 	protected final HashMap<IGeneratorType, IGenerator> generators;
 	private final PriorityQueue<Event> events;
 	private PauseEvent pauseEvent;
-	private final long maxTimestamp;
-	private volatile long timestamp;
+	private final double maxTimestamp;
+	private volatile double timestamp;
 
-	public EventSimulation(long maxReplication, long batchSize, long maxSimulationTime)
+	public EventSimulation(long maxReplication, long batchSize, double maxSimulationTime)
 	{
 		super(maxReplication, batchSize);
 
@@ -24,12 +24,12 @@ public abstract class EventSimulation extends Simulation
 		events = new PriorityQueue<>();
 	}
 
-	public long getTimestamp()
+	public double getTimestamp()
 	{
 		return timestamp;
 	}
 
-	public long getMaxTimestamp()
+	public double getMaxTimestamp()
 	{
 		return maxTimestamp;
 	}
@@ -48,7 +48,7 @@ public abstract class EventSimulation extends Simulation
 	{
 		if (pauseEvent == null)
 		{
-			long nextTimestamp = PauseEvent.getNextTimestamp(timestamp, interval);
+			double nextTimestamp = PauseEvent.getNextTimestamp(timestamp, interval);
 			pauseEvent = new PauseEvent(nextTimestamp, this, interval, paused);
 
 			addEvent(pauseEvent);

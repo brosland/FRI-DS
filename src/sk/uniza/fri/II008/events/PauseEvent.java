@@ -8,7 +8,7 @@ public class PauseEvent extends Event
 {
 	private long interval, paused;
 
-	public PauseEvent(long timestamp, EventSimulation simulation, long interval, long paused)
+	public PauseEvent(double timestamp, EventSimulation simulation, long interval, long paused)
 	{
 		super(timestamp, simulation);
 
@@ -45,8 +45,8 @@ public class PauseEvent extends Event
 		}
 	}
 
-	public static long getNextTimestamp(long timestamp, long interval)
+	public static double getNextTimestamp(double timestamp, long interval)
 	{
-		return (timestamp / interval + 1) * interval;
+		return (timestamp / interval + 1.0) * interval;
 	}
 }
