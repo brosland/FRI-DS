@@ -2,13 +2,14 @@ package sk.uniza.fri.II008.tests;
 
 import java.util.Scanner;
 import sk.uniza.fri.II008.ISimulation;
+import sk.uniza.fri.II008.SimulationListener;
 
 public class ApplicationExample
 {
 	public static void main(String[] args)
 	{
 		ISimulation simulation = new SimulationExample(SimulationExample.UNLIMETED, 10000000);
-		simulation.setListener(new ISimulation.ISimulationListener()
+		simulation.setSimulationListener(new SimulationListener()
 		{
 			@Override
 			public void onReplicationEnd(long replication, Object[] values)

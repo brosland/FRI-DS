@@ -20,9 +20,9 @@ public final class ContinuousTriangularGenerator implements IContinuosGenerator
 		}
 
 		this.random = random;
-		this.min = min;
-		this.max = max;
-		this.modus = modus;
+		this.min = min * 1.0;
+		this.max = max * 1.0;
+		this.modus = modus * 1.0;
 	}
 
 	@Override

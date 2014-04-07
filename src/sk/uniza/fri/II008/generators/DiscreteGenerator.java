@@ -28,6 +28,6 @@ public class DiscreteGenerator implements IDiscreteGenerator
 	@Override
 	public int nextValue()
 	{
-		return min + random.nextInt(max - min);
+		return min + random.nextInt((max + 1) - min);
 	}
 }

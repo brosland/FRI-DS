@@ -16,6 +16,6 @@ public final class ContinuousExponencialGenerator implements IContinuosGenerator
 	@Override
 	public double nextValue()
 	{
-		return -1 / lambda * Math.log(random.nextDouble());
+		return -Math.log(1.0 - random.nextDouble()) / lambda;
 	}
 }

@@ -7,6 +7,12 @@ public interface ISimulation extends Runnable
 		public void onReplicationEnd(long replication, Object[] values);
 
 		public void onSimulationEnd();
+
+		public void onStart();
+
+		public void onPause();
+
+		public void onStop();
 	}
 
 	public enum State
@@ -14,11 +20,15 @@ public interface ISimulation extends Runnable
 		STOPPED, RUNNING, PAUSED
 	}
 
-	public void setListener(ISimulationListener listener);
+	public void setSimulationListener(ISimulationListener listener);
 
 	public State getState();
 
 	public void pause();
 
 	public void stop();
+
+	public long getCurrentReplication();
+
+	public long getReplicationCount();
 }

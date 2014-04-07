@@ -16,9 +16,19 @@ public class PauseEvent extends Event
 		this.paused = paused;
 	}
 
+	public long getInterval()
+	{
+		return interval;
+	}
+
 	public void setInterval(long interval)
 	{
 		this.interval = interval;
+	}
+
+	public long getPaused()
+	{
+		return paused;
 	}
 
 	public void setPaused(long paused)
