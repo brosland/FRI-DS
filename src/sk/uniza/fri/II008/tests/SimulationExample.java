@@ -6,7 +6,7 @@ public class SimulationExample extends Simulation
 {
 	public SimulationExample()
 	{
-		this(UNLIMETED, 1000);
+		this(UNLIMITED, 1000);
 	}
 
 	public SimulationExample(long maxReplication, long batchSize)

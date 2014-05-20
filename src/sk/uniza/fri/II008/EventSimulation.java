@@ -1,49 +1,24 @@
 package sk.uniza.fri.II008;
 
 import sk.uniza.fri.II008.events.Event;
-import java.util.HashMap;
 import java.util.PriorityQueue;
-import java.util.logging.Logger;
 import sk.uniza.fri.II008.events.PauseEvent;
-import sk.uniza.fri.II008.generators.IGenerator;
-import sk.uniza.fri.II008.generators.IGenerator.IGeneratorType;
 
 public abstract class EventSimulation extends Simulation
 {
-	public interface IEventSimulationListener
-	{
-		public void onChange();
-	}
-
-	protected final HashMap<IGeneratorType, IGenerator> generators;
-	private IEventSimulationListener listener = new EventSimulationListener()
-	{
-	};
 	private final PriorityQueue<Event> events;
 	private volatile PauseEvent pauseEvent;
 	private final double maxTimestamp;
 	private volatile double timestamp;
 	private final Object[] emptyReplicationData = new Object[] {};
-	private volatile boolean logging = false;
-	public static final Logger LOGGER = Logger.getLogger(EventSimulation.class.getName());
-
-	static
-	{
-		LOGGER.setUseParentHandlers(false);
-	}
 
 	public EventSimulation(long replicationCount, long batchSize, double maxTimestamp)
 	{
 		super(replicationCount, batchSize);
 
 		this.maxTimestamp = maxTimestamp;
-		generators = new HashMap<>();
+		
 		events = new PriorityQueue<>();
-	}
-
-	public void setEventSimulationListener(IEventSimulationListener listener)
-	{
-		this.listener = listener;
 	}
 
 	public double getTimestamp()
@@ -56,29 +31,24 @@ public abstract class EventSimulation extends Simulation
 		return maxTimestamp;
 	}
 
-	public IGenerator getGenerator(IGeneratorType generator)
-	{
-		return generators.get(generator);
-	}
-
 	public boolean hasPauseEvent()
 	{
 		return pauseEvent != null;
 	}
 
-	public void setPauseEvent(long interval, long paused)
+	public void setPauseEvent(long interval, long duration)
 	{
 		if (pauseEvent == null)
 		{
 			double nextTimestamp = PauseEvent.getNextTimestamp(timestamp, interval);
-			pauseEvent = new PauseEvent(nextTimestamp, this, interval, paused);
+			pauseEvent = new PauseEvent(nextTimestamp, this, interval, duration);
 
 			addEvent(pauseEvent);
 		}
 		else
 		{
 			pauseEvent.setInterval(interval);
-			pauseEvent.setPaused(paused);
+			pauseEvent.setPaused(duration);
 		}
 	}
 
@@ -127,7 +97,7 @@ public abstract class EventSimulation extends Simulation
 			Event event = events.remove();
 			timestamp = event.getTimestamp();
 
-			if (maxTimestamp != UNLIMETED && timestamp > maxTimestamp)
+			if (maxTimestamp != UNLIMITED && timestamp > maxTimestamp)
 			{
 				timestamp = maxTimestamp;
 				break;
@@ -135,19 +105,9 @@ public abstract class EventSimulation extends Simulation
 
 			event.run();
 
-			listener.onChange();
+			replicationListener.onChange();
 		}
 
 		return emptyReplicationData;
-	}
-	
-	public boolean isEnabledLogging()
-	{
-		return logging;
-	}
-
-	public void setLogging(boolean logging)
-	{
-		this.logging = logging;
 	}
 }

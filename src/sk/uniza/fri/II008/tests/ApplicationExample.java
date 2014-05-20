@@ -8,7 +8,7 @@ public class ApplicationExample
 {
 	public static void main(String[] args)
 	{
-		ISimulation simulation = new SimulationExample(SimulationExample.UNLIMETED, 10000000);
+		ISimulation simulation = new SimulationExample(SimulationExample.UNLIMITED, 10000000);
 		simulation.setSimulationListener(new SimulationListener()
 		{
 			@Override

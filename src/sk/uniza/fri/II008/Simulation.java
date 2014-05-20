@@ -1,30 +1,51 @@
 package sk.uniza.fri.II008;
 
+import java.util.HashMap;
+import java.util.logging.Logger;
+import sk.uniza.fri.II008.generators.IGenerator;
+
 public abstract class Simulation implements ISimulation
 {
-	public static final int UNLIMETED = -1;
-	private ISimulation.ISimulationListener listener = new SimulationListener()
+	public static final int UNLIMITED = -1;
+	protected ISimulationListener simulationListener = new SimulationListener()
+	{
+	};
+	protected IReplicationListener replicationListener = new ReplicationListener()
 	{
 	};
 	private final long replicationCount, batchSize;
 	private volatile long replication = 0;
 	private volatile ISimulation.State state = ISimulation.State.STOPPED;
+	protected final HashMap<IGenerator.IGeneratorType, IGenerator> generators;
+	public static final Logger LOGGER = Logger.getLogger(EventSimulation.class.getName());
 
-	public Simulation()
+	static
 	{
-		this(UNLIMETED, 10000);
+		LOGGER.setUseParentHandlers(false);
 	}
 
 	public Simulation(long replicationCount, long batchSize)
 	{
 		this.replicationCount = replicationCount;
 		this.batchSize = batchSize;
+		this.generators = new HashMap<>();
 	}
 
 	@Override
-	public void setSimulationListener(ISimulation.ISimulationListener listener)
+	public void setSimulationListener(ISimulationListener listener)
 	{
-		this.listener = listener;
+		this.simulationListener = listener;
+	}
+
+	@Override
+	public void setReplicationListener(IReplicationListener listener)
+	{
+		this.replicationListener = listener;
+	}
+
+	public IGenerator getGenerator(IGenerator.IGeneratorType generator)
+	{
+		return generators.get(generator);
 	}
 
 	@Override
@@ -33,9 +54,10 @@ public abstract class Simulation implements ISimulation
 		replication = 0;
 		state = ISimulation.State.RUNNING;
 
-		listener.onStart();
+		simulationListener.onStart();
+		replicationListener.onStart();
 
-		while (replicationCount == UNLIMETED || replication < replicationCount)
+		while (replicationCount == UNLIMITED || replication < replicationCount)
 		{
 			if (state == ISimulation.State.PAUSED)
 			{
@@ -62,7 +84,8 @@ public abstract class Simulation implements ISimulation
 
 			if (replication % batchSize == 0)
 			{
-				listener.onReplicationEnd(replication, data);
+				simulationListener.onReplicationEnd(replication, data);
+				replicationListener.onReplicationEnd(replication, data);
 			}
 		}
 
@@ -71,7 +94,8 @@ public abstract class Simulation implements ISimulation
 			stop();
 		}
 
-		listener.onSimulationEnd();
+		simulationListener.onSimulationEnd();
+		replicationListener.onSimulationEnd();
 	}
 
 	@Override
@@ -84,7 +108,8 @@ public abstract class Simulation implements ISimulation
 
 		state = state == ISimulation.State.RUNNING ? ISimulation.State.PAUSED : ISimulation.State.RUNNING;
 
-		listener.onPause();
+		simulationListener.onPause();
+		replicationListener.onPause();
 	}
 
 	@Override
@@ -92,7 +117,8 @@ public abstract class Simulation implements ISimulation
 	{
 		state = ISimulation.State.STOPPED;
 
-		listener.onStop();
+		simulationListener.onStop();
+		replicationListener.onStop();
 	}
 
 	@Override
@@ -102,7 +128,7 @@ public abstract class Simulation implements ISimulation
 	}
 
 	@Override
-	public long getCurrentReplication()
+	public long getCurrentReplicationId()
 	{
 		return replication;
 	}
@@ -111,6 +137,19 @@ public abstract class Simulation implements ISimulation
 	public long getReplicationCount()
 	{
 		return replicationCount;
+	}
+
+	public boolean isEnabledLogging()
+	{
+		return LOGGER.getHandlers().length > 0;
+	}
+
+	public void log(String message)
+	{
+		if (isEnabledLogging())
+		{
+			LOGGER.info(message);
+		}
 	}
 
 	protected abstract void prepareReplication(long replication);
